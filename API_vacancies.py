@@ -3,11 +3,6 @@ import requests
 from abc import ABC, abstractmethod
 
 
-def printj(dict_to_print: dict) -> None:
-    """Выводит словарь в json-подобном удобном формате с отступами"""
-    print(json.dumps(dict_to_print, indent=2, ensure_ascii=False))
-
-
 class ApiVacancies(ABC):
 
     @abstractmethod
@@ -29,12 +24,14 @@ class HeadHunter(Vacancies, ApiVacancies):
         self.data = None
 
     def get_vacancies(self):
+
         self.data = requests.get('https://api.hh.ru/vacancies',
                                  params={'text': self.keywords, 'per_page': self.page}).json()
 
         return self.data
 
     def sorting_vacansies(self):
+        ''' сортирует вакансии и создаёт список '''
 
         suitable_vacancies = []
 
@@ -80,6 +77,7 @@ class SuperJob(Vacancies, ApiVacancies):
         return self.data
 
     def sorting_vacansies(self):
+        ''' сортирует вакансии и создаёт список '''
 
         suitable_vacancies = []
 
@@ -101,11 +99,13 @@ class SuperJob(Vacancies, ApiVacancies):
 
 
 def load_vacancies(list_vacancies):
+    '''загружает список вакансий в json файл'''
     with open("vacancies.json", "w", encoding="UTF-8") as file:
         file.write(json.dumps(list_vacancies, indent=4))
 
 
 def formatting():
+    '''выводит информацию из файла в нужном виде'''
     with open("vacancies.json", "r", encoding="UTF-8") as file:
         item = json.load(file)
         for i in item:
@@ -113,9 +113,3 @@ def formatting():
                 f'Профессия: {i["profession"]}\nКраткое описание: {i["candidat"]}\nТребуемый опыт: {i["experience"]}'
                 f'\nЗарплата: {i["payment"]}\nСсылка на вакансию: {i["url"]}\n')
 
-
-# hh = HeadHunter("python", 15000, 3)
-# hh.get_vacancies()
-# printj(hh.sorting_vacansies())
-# load_vacancies(hh.sorting_vacansies())
-# formatting()
