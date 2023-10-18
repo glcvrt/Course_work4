@@ -10,17 +10,13 @@ class ApiVacancies(ABC):
         pass
 
 
-class Vacancies:
+class HeadHunter(ApiVacancies):
+
     def __init__(self, keywords: str, salary: int, page):
         self.keywords = keywords
         self.salary = salary
         self.page = page
 
-
-class HeadHunter(Vacancies, ApiVacancies):
-
-    def __init__(self, keywords: str, salary: int, page):
-        super().__init__(keywords, salary, page)
         self.data = None
 
     def get_vacancies(self):
@@ -61,10 +57,12 @@ class HeadHunter(Vacancies, ApiVacancies):
         return suitable_vacancies
 
 
-class SuperJob(Vacancies, ApiVacancies):
+class SuperJob(ApiVacancies):
 
     def __init__(self, keywords: str, salary: int, page):
-        super().__init__(keywords, salary, page)
+        self.keywords = keywords
+        self.salary = salary
+        self.page = page
         self.data = None
 
     def get_vacancies(self):
@@ -98,18 +96,50 @@ class SuperJob(Vacancies, ApiVacancies):
         return suitable_vacancies
 
 
-def load_vacancies(list_vacancies):
-    '''загружает список вакансий в json файл'''
-    with open("vacancies.json", "w", encoding="UTF-8") as file:
-        file.write(json.dumps(list_vacancies, indent=4))
+class WorkingFile(ABC):
+
+    @abstractmethod
+    def load_vacancies(self, list_vacancies):
+        pass
+
+    @abstractmethod
+    def formatting(self):
+        pass
 
 
-def formatting():
-    '''выводит информацию из файла в нужном виде'''
-    with open("vacancies.json", "r", encoding="UTF-8") as file:
-        item = json.load(file)
-        for i in item:
-            print(
-                f'Профессия: {i["profession"]}\nКраткое описание: {i["candidat"]}\nТребуемый опыт: {i["experience"]}'
-                f'\nЗарплата: {i["payment"]}\nСсылка на вакансию: {i["url"]}\n')
+class HHFile(WorkingFile):
+    def __init__(self, list_vacancies: list):
+        self.list_vacancies = list_vacancies
 
+    def load_vacancies(self):
+        '''загружает список вакансий в json файл'''
+        with open("head_hunter_vacancies.json", "w", encoding="UTF-8") as file:
+            file.write(json.dumps(self.list_vacancies, indent=4))
+
+    def formatting(self):
+        '''выводит информацию из файла в нужном виде'''
+        with open("head_hunter_vacancies.json", "r", encoding="UTF-8") as file:
+            item = json.load(file)
+            for i in item:
+                print(
+                    f'Профессия: {i["profession"]}\nКраткое описание: {i["candidat"]}\nТребуемый опыт: {i["experience"]}'
+                    f'\nЗарплата: {i["payment"]}\nСсылка на вакансию: {i["url"]}\n')
+
+
+class SJFile(WorkingFile):
+    def __init__(self, list_vacancies: list):
+        self.list_vacancies = list_vacancies
+
+    def load_vacancies(self):
+        '''загружает список вакансий в json файл'''
+        with open("super_job_vacancies.json", "w", encoding="UTF-8") as file:
+            file.write(json.dumps(self.list_vacancies, indent=4))
+
+    def formatting(self):
+        '''выводит информацию из файла в нужном виде'''
+        with open("super_job_vacancies.json", "r", encoding="UTF-8") as file:
+            item = json.load(file)
+            for i in item:
+                print(
+                    f'Профессия: {i["profession"]}\nКраткое описание: {i["candidat"]}\nТребуемый опыт: {i["experience"]}'
+                    f'\nЗарплата: {i["payment"]}\nСсылка на вакансию: {i["url"]}\n')

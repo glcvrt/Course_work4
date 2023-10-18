@@ -1,4 +1,4 @@
-from API_vacancies import HeadHunter, SuperJob, load_vacancies, formatting
+from API_vacancies import HeadHunter, SuperJob, HHFile, SJFile
 
 
 def main():
@@ -15,8 +15,9 @@ def main():
             if len(data) == 0:
                 page += 1
             else:
-                load_vacancies(data)
-                formatting()
+                hh = HHFile(data)
+                hh.load_vacancies()
+                hh.formatting()
                 answer = input("more - ещё посмотреть вакансии, exit - выйти: ")
                 if answer == "more":
                     page += 1
@@ -32,8 +33,9 @@ def main():
                 page += 1
 
             else:
-                load_vacancies(data)
-                formatting()
+                sj = SJFile(data)
+                sj.load_vacancies()
+                sj.formatting()
                 answer = input("more - ещё посмотреть вакансии, exit - выйти: ")
                 if answer == "more":
                     page += 1
